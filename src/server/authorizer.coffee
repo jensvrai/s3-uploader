@@ -20,7 +20,7 @@ import Future from "fibers/future"
  * @return {Object}               Returns the signature object to use for uploading
 ###
 class Authorizer
-	constructor: ({@secret, @key, @bucket, @region = "us-east-1", @path = "", @expiration = 1800000, @acl = "public-read"}) ->
+	constructor: ({@secret, @key, @bucket, @region, @path = "", @expiration = 1800000, @acl = "public-read"}) ->
 		@SDK = new S3
 			secretAccessKey:@secret
 			accessKeyId:@key
@@ -72,11 +72,16 @@ class Authorizer
 			region:region
 			secret:@secret
 
-		# Identify post_url
 		if region is "us-standard" # This region does not exist but I can see how people can be confused about it
 			region = "us-east-1"
-
-		post_url = "https://s3-#{region}.amazonaws.com/#{bucket}"
+		
+		post_url = '';
+		# Identify post_url
+		
+		if region is not null
+			post_url = "https://s3-#{region}.amazonaws.com/#{bucket}"
+		else 
+			post_url = "https://s3.amazonaws.com/#{bucket}"
 
 		# Return authorization object
 		policy:policy
