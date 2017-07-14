@@ -83,7 +83,11 @@ Authorizer = function () {
     }
     meta_uuid = (0, _v2.default)();
     meta_date = (0, _moment2.default)().format('YYYYMMDD') + "T000000Z";
-    meta_credential = this.key + "/" + (0, _moment2.default)().format('YYYYMMDD') + "/" + region + "/s3/aws4_request";
+    if (region === !null) {
+      meta_credential = this.key + "/" + (0, _moment2.default)().format('YYYYMMDD') + "/" + region + "/s3/aws4_request";
+    } else {
+      meta_credential = this.key + "/" + (0, _moment2.default)().format('YYYYMMDD') + "/s3/aws4_request";
+    }
     policy = {
       "expiration": expiration_date,
       "conditions": [["content-length-range", 0, file_size], {

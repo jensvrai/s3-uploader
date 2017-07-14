@@ -47,7 +47,12 @@ class Authorizer
 
 		meta_uuid = uuid()
 		meta_date = "#{moment().format('YYYYMMDD')}T000000Z"
-		meta_credential = "#{@key}/#{moment().format('YYYYMMDD')}/#{region}/s3/aws4_request"
+		
+		if region is not null
+			meta_credential = "#{@key}/#{moment().format('YYYYMMDD')}/#{region}/s3/aws4_request"
+		else 
+			meta_credential = "#{@key}/#{moment().format('YYYYMMDD')}/s3/aws4_request"
+
 		policy =
 			"expiration":expiration_date
 			"conditions":[
