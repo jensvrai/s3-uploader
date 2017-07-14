@@ -20,7 +20,7 @@ import Future from "fibers/future"
  * @return {Object}               Returns the signature object to use for uploading
 ###
 class Authorizer
-	constructor: ({@secret, @key, @bucket, @region, @path = "", @expiration = 1800000, @acl = "public-read"}) ->
+	constructor: ({@secret, @key, @bucket, @region = "us-east-1", @path = "", @expiration = 1800000, @acl = "public-read"}) ->
 		@SDK = new S3
 			secretAccessKey:@secret
 			accessKeyId:@key
@@ -47,12 +47,7 @@ class Authorizer
 
 		meta_uuid = uuid()
 		meta_date = "#{moment().format('YYYYMMDD')}T000000Z"
-		
-		if region is not null
-			meta_credential = "#{@key}/#{moment().format('YYYYMMDD')}/#{region}/s3/aws4_request"
-		else 
-			meta_credential = "#{@key}/#{moment().format('YYYYMMDD')}/s3/aws4_request"
-
+		meta_credential = "#{@key}/#{moment().format('YYYYMMDD')}/#{region}/s3/aws4_request"
 		policy =
 			"expiration":expiration_date
 			"conditions":[
@@ -77,16 +72,14 @@ class Authorizer
 			region:region
 			secret:@secret
 
+		# Identify post_url
 		if region is "us-standard" # This region does not exist but I can see how people can be confused about it
 			region = "us-east-1"
-		
-		post_url = '';
-		# Identify post_url
-		
-		if region is not null
-			post_url = "https://s3-#{region}.amazonaws.com/#{bucket}"
-		else 
+
+		if region is "us-east-1"
 			post_url = "https://s3.amazonaws.com/#{bucket}"
+		else
+			post_url = "https://s3-#{region}.amazonaws.com/#{bucket}"
 
 		# Return authorization object
 		policy:policy

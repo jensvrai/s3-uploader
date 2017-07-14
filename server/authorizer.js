@@ -52,8 +52,8 @@ var Authorizer;
 
 Authorizer = function () {
   function Authorizer(arg) {
-    var ref, ref1, ref2;
-    this.secret = arg.secret, this.key = arg.key, this.bucket = arg.bucket, this.region = arg.region, this.path = (ref = arg.path) != null ? ref : "", this.expiration = (ref1 = arg.expiration) != null ? ref1 : 1800000, this.acl = (ref2 = arg.acl) != null ? ref2 : "public-read";
+    var ref, ref1, ref2, ref3;
+    this.secret = arg.secret, this.key = arg.key, this.bucket = arg.bucket, this.region = (ref = arg.region) != null ? ref : "us-east-1", this.path = (ref1 = arg.path) != null ? ref1 : "", this.expiration = (ref2 = arg.expiration) != null ? ref2 : 1800000, this.acl = (ref3 = arg.acl) != null ? ref3 : "public-read";
     this.SDK = new _s2.default({
       secretAccessKey: this.secret,
       accessKeyId: this.key,
@@ -83,11 +83,7 @@ Authorizer = function () {
     }
     meta_uuid = (0, _v2.default)();
     meta_date = (0, _moment2.default)().format('YYYYMMDD') + "T000000Z";
-    if (region === !null) {
-      meta_credential = this.key + "/" + (0, _moment2.default)().format('YYYYMMDD') + "/" + region + "/s3/aws4_request";
-    } else {
-      meta_credential = this.key + "/" + (0, _moment2.default)().format('YYYYMMDD') + "/s3/aws4_request";
-    }
+    meta_credential = this.key + "/" + (0, _moment2.default)().format('YYYYMMDD') + "/" + region + "/s3/aws4_request";
     policy = {
       "expiration": expiration_date,
       "conditions": [["content-length-range", 0, file_size], {
@@ -117,11 +113,10 @@ Authorizer = function () {
     if (region === "us-standard") {
       region = "us-east-1";
     }
-    post_url = '';
-    if (region === !null) {
-      post_url = "https://s3-" + region + ".amazonaws.com/" + bucket;
-    } else {
+    if (region === "us-east-1") {
       post_url = "https://s3.amazonaws.com/" + bucket;
+    } else {
+      post_url = "https://s3-" + region + ".amazonaws.com/" + bucket;
     }
     return {
       policy: policy,
